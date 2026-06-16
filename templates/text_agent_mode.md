@@ -11,7 +11,7 @@ python tools/visual_extract.py <image_path_or_base64_or_data_url> --task auto --
 ```
 
 2. Read `visual_packet.json` or `visual_packet.md`.
-3. Select the recommended template from `routing.recommended_template`.
+3. Select the recommended template from `routing.recommended_template` unless the user explicitly requested a different task.
 4. Answer using only evidence from the packet.
 
 ## Required answer structure
@@ -24,7 +24,7 @@ python tools/visual_extract.py <image_path_or_base64_or_data_url> --task auto --
 
 ## 推测与解释
 - 推测：...
-  - 依据：region_..., text_...
+  - 依据：region_..., text_..., quote: "..."
 
 ## 不确定点
 - ...
@@ -36,6 +36,8 @@ python tools/visual_extract.py <image_path_or_base64_or_data_url> --task auto --
 ## Non-negotiable rules
 
 - You are not directly seeing the image. You are reasoning from a visual translation.
-- Do not invent objects, people, UI controls, or chart values that are not in the packet.
+- Do not invent objects, people, UI controls, arrows, lanes, or chart values that are not in the packet.
 - If OCR is empty or low-confidence, say text could not be reliably read.
+- Important claims must quote `raw_text` or `normalized_text` when OCR evidence exists.
+- Do not mention examples, old cases, or placeholder OCR errors unless they appear in this packet.
 - If a user asks for a high-risk decision, refuse or ask for professional/human review.

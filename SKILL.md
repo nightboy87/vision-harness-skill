@@ -1,6 +1,6 @@
 ---
 name: vision-harness-skill
-description: Use this skill when the user asks an agent to analyze an image, screenshot, UI screenshot, error screenshot, flowchart, diagram, chart-like visual, or visual material and needs structured facts, evidence regions, OCR/layout extraction, visual_packet output, screenshot diagnosis, workflow-to-SOP conversion, or UI audit. For text-only LLM agents, run tools/visual_extract.py to convert the image into a visual_packet. For multimodal LLM agents, use the structured visual reading protocol to separate observed facts, inferences, evidence regions, uncertainties, and recommended actions.
+description: Use this skill when the user asks an agent to analyze an image, screenshot, UI screenshot, error screenshot, flowchart, swimlane, diagram, dashboard, chart-like visual, or visual material and needs structured facts, evidence quotes, evidence regions, OCR/layout extraction, visual_packet output, screenshot diagnosis, workflow-to-SOP extraction, UI audit, UI semantic rebuild, or UI fidelity clone. For text-only LLM agents, run tools/visual_extract.py to convert the image into a visual_packet. For multimodal LLM agents, use the structured visual reading protocol to separate observed facts, inferences, evidence regions, OCR quotes, uncertainties, and recommended actions.
 ---
 
 # Vision Harness Skill
@@ -10,9 +10,23 @@ Vision Harness Skill is a dual-mode visual understanding skill for agents.
 It has two goals:
 
 1. **Text-only agent mode**: convert an image into a structured `visual_packet` so a text-only LLM agent can reason about the image without native vision.
-2. **Multimodal agent mode**: make a multimodal LLM analyze images with a disciplined reading protocol, evidence regions, fact/inference separation, and uncertainty marking.
+2. **Multimodal agent mode**: make a multimodal LLM analyze images with a disciplined reading protocol, evidence regions, evidence quotes, fact/inference separation, and uncertainty marking.
 
 This skill is not a general computer-use agent, not a replacement for a multimodal model, and not a medical, legal, security, or identity-recognition system.
+
+## What changed in v0.1.2
+
+v0.1.2 is based on three real scenario tests: technical screenshot diagnosis, workflow swimlane extraction, and UI screenshot-to-HTML reconstruction.
+
+It improves:
+
+- evidence quotes for important OCR-based claims;
+- stricter fact/inference separation;
+- no stale example or template-pollution language;
+- workflow output split into extracted SOP, inferred interpretation, and suggested missing details;
+- stricter rules for decision points in workflow diagrams;
+- UI reconstruction modes: `ui_audit`, `ui_semantic_rebuild`, and `ui_fidelity_clone`;
+- layout tree, spatial constraints, and fidelity self-check for UI recreation.
 
 ## When to use
 
@@ -22,6 +36,7 @@ Use this skill when the user asks things like:
 - “根据这个报错截图给我排查建议。”
 - “把这张流程图转成 SOP。”
 - “分析这个 UI 截图的问题。”
+- “根据这个 UI 截图复刻一个 HTML 页面。”
 - “这张图里哪些信息能被 Agent 继续使用？”
 - “让文本模型也能处理这张图片。”
 - “让多模态模型不要只泛泛描述图片，而是给证据链。”
@@ -53,7 +68,7 @@ Then reason only from:
 
 - The current agent is already driven by a multimodal LLM.
 - The user wants better image analysis, not merely a description.
-- The answer must include observed facts, inferences, evidence regions, and uncertainties.
+- The answer must include observed facts, inferences, evidence regions, evidence quotes, and uncertainties.
 
 Read: `templates/multimodal_agent_mode.md`
 
@@ -69,9 +84,9 @@ Choose one of the task templates after reading the image and user intent.
 
 | Task | Use when | Template |
 |---|---|---|
-| Screenshot diagnosis | error screenshots, software issues, UI error messages, dashboards | `templates/screenshot_diagnosis.md` |
-| Workflow to SOP | flowcharts, whiteboard processes, process diagrams, swimlanes | `templates/workflow_to_sop.md` |
-| UI audit | product screenshots, web/app screens, UX review, information architecture | `templates/ui_audit.md` |
+| Screenshot diagnosis | error screenshots, build logs, software issues, UI error messages, dashboards | `templates/screenshot_diagnosis.md` |
+| Workflow to SOP | flowcharts, whiteboard processes, swimlanes, process diagrams | `templates/workflow_to_sop.md` |
+| UI audit / reconstruction | product screenshots, web/app screens, UX review, UI semantic rebuild, UI fidelity clone | `templates/ui_audit.md` |
 
 If no task fits, use the generic structured visual reading rules in `templates/multimodal_agent_mode.md`.
 
@@ -84,8 +99,9 @@ Always separate:
 1. `observed_facts`: things visible in the image or extracted in the visual_packet.
 2. `inferences`: interpretations based on the facts.
 3. `evidence_regions`: region IDs, OCR block IDs, or visual features supporting the inference.
-4. `uncertainties`: what is unclear, not detected, possibly OCR-wrong, or needs human confirmation.
-5. `recommended_actions`: what to do next.
+4. `evidence_quotes`: raw or normalized OCR text supporting important claims.
+5. `uncertainties`: what is unclear, not detected, possibly OCR-wrong, or needs human confirmation.
+6. `recommended_actions`: what to do next.
 
 ## Critical gotchas
 
@@ -96,10 +112,13 @@ High-priority rules:
 - Do not analyze raw base64 as natural language.
 - Do not treat OCR as perfect truth.
 - Do not treat heuristic image type as a confirmed label.
+- Do not mention examples, old cases, or placeholder OCR errors unless they appear in the current `visual_packet`.
 - Do not claim certainty when the visual_packet says uncertainty.
 - Do not perform identity, sensitive attribute, medical, legal, or security-critical judgments.
 - In multimodal mode, cite region IDs for important conclusions whenever annotated regions exist.
 - In text-only mode, be clear that the agent is reasoning from a visual translation, not directly seeing the image.
+- For workflow diagrams, do not invent arrows, decisions, or branches.
+- For UI recreation, distinguish semantic rebuild from high-fidelity clone; preserve major spatial relationships when cloning.
 
 ## Main tool
 
@@ -117,6 +136,7 @@ Outputs:
 - `visual_packet.md`
 - `annotated_regions.png`
 - `crops/region_*.png`
+- `agent_instruction.md`
 
 ## Validation
 
@@ -126,5 +146,6 @@ A usable result should satisfy:
 
 - visual_packet exists and validates against schema.
 - annotated_regions exists.
-- OCR blocks or layout regions exist for text-heavy images.
+- OCR blocks, text line groups, or layout regions exist for text-heavy images.
 - final answer separates facts, inferences, evidence, uncertainties, and actions.
+- critical text-based claims include evidence quotes.

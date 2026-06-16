@@ -8,10 +8,14 @@ def run_ocr(img: Image.Image) -> List[Dict]:
     """Run OCR with optional engines.
 
     Priority:
-    1. rapidocr_onnxruntime, if installed
-    2. pytesseract, if installed and system tesseract is available
-    3. return empty list with no hard failure
+    1. paddleocr, if installed. Usually better for Chinese UI/flowchart screenshots.
+    2. rapidocr_onnxruntime, if installed. Lightweight and fast.
+    3. pytesseract, if installed and system tesseract is available.
+    4. return empty list with no hard failure.
     """
+    paddle = _try_paddleocr(img)
+    if paddle:
+        return paddle
     rapid = _try_rapidocr(img)
     if rapid:
         return rapid
@@ -19,6 +23,49 @@ def run_ocr(img: Image.Image) -> List[Dict]:
     if tess:
         return tess
     return []
+
+
+def _try_paddleocr(img: Image.Image) -> List[Dict]:
+    try:
+        import numpy as np
+        from paddleocr import PaddleOCR
+    except Exception:
+        return []
+
+    try:
+        # Constructor arguments differ slightly across PaddleOCR versions.
+        try:
+            engine = PaddleOCR(use_angle_cls=True, lang="ch", show_log=False)
+        except TypeError:
+            engine = PaddleOCR(use_angle_cls=True, lang="ch")
+        result = engine.ocr(np.array(img), cls=True)
+        blocks = []
+        # Newer/older PaddleOCR versions may nest results differently.
+        pages = result if result and isinstance(result, list) else []
+        if pages and pages and isinstance(pages[0], list) and pages and pages[0] and isinstance(pages[0][0], list) and len(pages) == 1:
+            items = pages[0]
+        else:
+            items = pages
+        for item in items:
+            try:
+                points = item[0]
+                text = str(item[1][0])
+                conf = float(item[1][1])
+            except Exception:
+                continue
+            xs = [int(p[0]) for p in points]
+            ys = [int(p[1]) for p in points]
+            if text.strip():
+                blocks.append({
+                    "id": f"text_{len(blocks)+1:03d}",
+                    "text": text.strip(),
+                    "bbox": [min(xs), min(ys), max(xs), max(ys)],
+                    "confidence": round(conf, 3),
+                    "region_id": ""
+                })
+        return blocks
+    except Exception:
+        return []
 
 
 def _try_rapidocr(img: Image.Image) -> List[Dict]:
@@ -34,18 +81,19 @@ def _try_rapidocr(img: Image.Image) -> List[Dict]:
         blocks = []
         if not result:
             return []
-        for i, item in enumerate(result, start=1):
+        for item in result:
             points, text, conf = item[0], str(item[1]), float(item[2])
             xs = [int(p[0]) for p in points]
             ys = [int(p[1]) for p in points]
-            blocks.append({
-                "id": f"text_{i:03d}",
-                "text": text.strip(),
-                "bbox": [min(xs), min(ys), max(xs), max(ys)],
-                "confidence": round(conf, 3),
-                "region_id": ""
-            })
-        return [b for b in blocks if b["text"]]
+            if text.strip():
+                blocks.append({
+                    "id": f"text_{len(blocks)+1:03d}",
+                    "text": text.strip(),
+                    "bbox": [min(xs), min(ys), max(xs), max(ys)],
+                    "confidence": round(conf, 3),
+                    "region_id": ""
+                })
+        return blocks
     except Exception:
         return []
 

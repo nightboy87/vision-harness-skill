@@ -20,7 +20,7 @@ Use all available inputs:
 3. Inspect evidence regions one by one.
 4. Extract observed facts only.
 5. Then derive inferences.
-6. Attach evidence region IDs to each important inference.
+6. Attach evidence region IDs and OCR quotes to each important inference.
 7. Mark uncertainties.
 8. Give task-specific recommended actions.
 
@@ -37,6 +37,7 @@ Use all available inputs:
       "claim": "",
       "evidence_regions": [],
       "evidence_text_blocks": [],
+      "evidence_quotes": [],
       "confidence": "low|medium|high"
     }
   ],
@@ -51,3 +52,5 @@ Use all available inputs:
 - Do not say “clearly” when the relevant region is blurred, small, or not OCR-supported.
 - Do not skip uncertainty.
 - Do not ignore `visual_packet` when it exists.
+- Do not move from visual observation to root-cause/business conclusion without evidence.
+- Do not mention examples, old cases, or placeholder OCR errors unless they appear in the current packet.

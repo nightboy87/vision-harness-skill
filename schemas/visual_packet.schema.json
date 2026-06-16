@@ -29,14 +29,11 @@
       }
     },
     "visual_features": {"type": "object"},
-    "layout_regions": {
-      "type": "array",
-      "items": {"$ref": "#/$defs/region"}
-    },
-    "ocr_blocks": {
-      "type": "array",
-      "items": {"$ref": "#/$defs/ocr_block"}
-    },
+    "layout_regions": {"type": "array", "items": {"$ref": "#/$defs/region"}},
+    "ocr_blocks": {"type": "array", "items": {"$ref": "#/$defs/ocr_block"}},
+    "text_line_groups": {"type": "array", "items": {"$ref": "#/$defs/text_line_group"}},
+    "evidence_quotes": {"type": "array", "items": {"$ref": "#/$defs/evidence_quote"}},
+    "spatial_layout_analysis": {"type": "object"},
     "structure_candidates": {"type": "object"},
     "image_type_hypotheses": {
       "type": "array",
@@ -62,12 +59,7 @@
     "agent_notes": {"type": "string"}
   },
   "$defs": {
-    "bbox": {
-      "type": "array",
-      "minItems": 4,
-      "maxItems": 4,
-      "items": {"type": "integer"}
-    },
+    "bbox": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "integer"}},
     "region": {
       "type": "object",
       "required": ["id", "type_hint", "bbox"],
@@ -86,9 +78,33 @@
       "properties": {
         "id": {"type": "string"},
         "text": {"type": "string"},
+        "normalized_text": {"type": "string"},
         "bbox": {"$ref": "#/$defs/bbox"},
         "confidence": {"type": "number"},
         "region_id": {"type": "string"}
+      }
+    },
+    "text_line_group": {
+      "type": "object",
+      "required": ["id", "text", "bbox", "text_ids"],
+      "properties": {
+        "id": {"type": "string"},
+        "text": {"type": "string"},
+        "bbox": {"$ref": "#/$defs/bbox"},
+        "text_ids": {"type": "array", "items": {"type": "string"}},
+        "region_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "evidence_quote": {
+      "type": "object",
+      "required": ["id", "raw_text", "normalized_text"],
+      "properties": {
+        "id": {"type": "string"},
+        "region_id": {"type": "string"},
+        "raw_text": {"type": "string"},
+        "normalized_text": {"type": "string"},
+        "bbox": {"$ref": "#/$defs/bbox"},
+        "confidence": {"type": ["number", "null"]}
       }
     }
   }

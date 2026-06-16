@@ -14,16 +14,23 @@ def check_case(case_dir: Path) -> dict:
         "annotated_regions_png": (case_dir / "annotated_regions.png").exists(),
         "schema_like": False,
         "ocr_blocks_count": 0,
+        "text_line_groups_count": 0,
+        "evidence_quotes_count": 0,
         "layout_regions_count": 0,
         "uncertainties_count": 0,
+        "has_spatial_layout_analysis": False,
     }
     packet_path = case_dir / "visual_packet.json"
     if packet_path.exists():
         packet = json.loads(packet_path.read_text(encoding="utf-8"))
-        result["schema_like"] = all(k in packet for k in ["source", "image_properties", "visual_features", "layout_regions", "ocr_blocks", "routing", "uncertainties"])
+        required = ["source", "image_properties", "visual_features", "layout_regions", "ocr_blocks", "routing", "uncertainties"]
+        result["schema_like"] = all(k in packet for k in required)
         result["ocr_blocks_count"] = len(packet.get("ocr_blocks", []))
+        result["text_line_groups_count"] = len(packet.get("text_line_groups", []))
+        result["evidence_quotes_count"] = len(packet.get("evidence_quotes", []))
         result["layout_regions_count"] = len(packet.get("layout_regions", []))
         result["uncertainties_count"] = len(packet.get("uncertainties", []))
+        result["has_spatial_layout_analysis"] = "spatial_layout_analysis" in packet
     result["pass"] = result["visual_packet_json"] and result["visual_packet_md"] and result["annotated_regions_png"] and result["schema_like"]
     return result
 

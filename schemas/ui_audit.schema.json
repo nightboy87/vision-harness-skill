@@ -1,17 +1,21 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "UI Audit Output",
+  "title": "UI Audit / UI Reconstruction Output",
   "type": "object",
-  "required": ["task", "observed_facts", "layout_summary", "issues", "evidence_regions", "priority_fixes", "uncertainties"],
+  "required": ["task", "mode", "observed_facts", "layout_tree", "spatial_constraints", "issues", "priority_fixes", "uncertainties"],
   "properties": {
     "task": {"const": "ui_audit"},
+    "mode": {"type": "string", "enum": ["ui_audit", "ui_semantic_rebuild", "ui_fidelity_clone"]},
     "observed_facts": {"type": "array", "items": {"type": "string"}},
-    "layout_summary": {"type": "string"},
+    "layout_tree": {"type": "object"},
+    "spatial_constraints": {"type": "array", "items": {"type": "string"}},
     "information_density": {"type": "string"},
     "primary_focus": {"type": "string"},
     "issues": {"type": "array", "items": {"type": "object"}},
     "evidence_regions": {"type": "array", "items": {"type": "string"}},
     "priority_fixes": {"type": "array", "items": {"type": "string"}},
+    "fidelity_checklist": {"type": "array", "items": {"type": "object"}},
+    "html_recreation_notes": {"type": "array", "items": {"type": "string"}},
     "uncertainties": {"type": "array", "items": {"type": "string"}}
   }
 }

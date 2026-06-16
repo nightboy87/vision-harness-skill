@@ -1,4 +1,5 @@
 id,mode,task,input_hint,expected_checks
-screenshot_001,text_agent,screenshot_diagnosis,error screenshot with visible 502 text,"visual_packet_exists;annotated_regions_exists;has_observed_facts;has_next_checks;has_uncertainties"
-workflow_001,text_agent,workflow_to_sop,flowchart with start decision end,"visual_packet_exists;has_nodes_or_uncertainty;has_draft_sop;has_uncertainties"
-ui_001,multimodal_agent,ui_audit,web app screen with dense content,"uses_region_ids;has_priority_fixes;separates_facts_inferences;has_uncertainties"
+screenshot_001,text_agent,screenshot_diagnosis,error screenshot or build log with visible failure text,"visual_packet_exists;annotated_regions_exists;has_evidence_quotes;separates_facts_inferences;has_next_checks;has_uncertainties"
+workflow_001,text_agent,workflow_to_sop,flowchart or swimlane diagram with visible node text,"visual_packet_exists;has_nodes_or_uncertainty;separates_extracted_sop_from_inference;decision_points_need_explicit_evidence;has_uncertainties"
+ui_001,multimodal_agent,ui_audit,web app screen or dashboard with dense content,"uses_region_ids;has_layout_tree;has_spatial_constraints;has_priority_fixes;has_uncertainties"
+ui_clone_001,multimodal_agent,ui_audit,UI screenshot to HTML recreation,"distinguishes_semantic_rebuild_from_fidelity_clone;has_fidelity_checklist;does_not_redesign_without_request"

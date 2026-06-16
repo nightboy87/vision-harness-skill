@@ -19,6 +19,10 @@ from layout_analyzer import (
     edge_density,
     grid_regions,
     assign_text_to_regions,
+    normalize_ocr_blocks,
+    text_line_groups,
+    evidence_quotes,
+    spatial_layout_analysis,
     infer_image_types,
     routing_suggestion,
     structure_candidates,
@@ -34,7 +38,11 @@ def build_packet(input_value: str, task: str = "auto") -> tuple:
     edge = edge_density(img)
     regions = grid_regions(img)
     ocr_blocks = run_ocr(img)
+    normalize_ocr_blocks(ocr_blocks)
     assign_text_to_regions(ocr_blocks, regions)
+    line_groups = text_line_groups(ocr_blocks)
+    quotes = evidence_quotes(ocr_blocks)
+    spatial = spatial_layout_analysis(img, ocr_blocks, regions)
     visual = {"color": color, "edge_density": edge}
     hypotheses = infer_image_types(props, visual, ocr_blocks, regions)
     routing = routing_suggestion(hypotheses, task)
@@ -45,13 +53,14 @@ def build_packet(input_value: str, task: str = "auto") -> tuple:
         "Layout regions are grid-based and heuristic; they are evidence anchors, not semantic objects.",
         "Image type hypotheses are heuristic and must not be treated as confirmed facts.",
         "The tool does not use a multimodal LLM and cannot reliably identify arbitrary objects or scenes.",
-        "Flow arrows and chart values are not fully parsed in v0.1; use human review for critical decisions."
+        "Flow arrows and chart values are not fully parsed in v0.1.2; use human review for critical decisions.",
+        "Evidence quotes are selected heuristically; always verify raw OCR text against the original image when precision matters."
     ]
     if not ocr_blocks:
         uncertainties.append("No OCR text was detected, or no OCR engine is installed. Text content may be missing from the packet.")
 
     packet = {
-        "version": "0.1.0",
+        "version": "0.1.2",
         "mode": "visual_bridge",
         "task": task,
         "source": source,
@@ -59,6 +68,9 @@ def build_packet(input_value: str, task: str = "auto") -> tuple:
         "visual_features": visual,
         "layout_regions": regions,
         "ocr_blocks": ocr_blocks,
+        "text_line_groups": line_groups,
+        "evidence_quotes": quotes,
+        "spatial_layout_analysis": spatial,
         "structure_candidates": candidates,
         "image_type_hypotheses": hypotheses,
         "routing": routing,
@@ -100,7 +112,9 @@ def main() -> int:
         "annotated_regions": str(annotated_path),
         "recommended_template": packet["routing"]["recommended_template"],
         "ocr_blocks": len(packet["ocr_blocks"]),
-        "layout_regions": len(packet["layout_regions"])
+        "layout_regions": len(packet["layout_regions"]),
+        "text_line_groups": len(packet.get("text_line_groups", [])),
+        "evidence_quotes": len(packet.get("evidence_quotes", []))
     }, ensure_ascii=False, indent=2))
     return 0
 
@@ -125,8 +139,9 @@ Rules:
 
 - Do not treat OCR as perfect truth.
 - Do not treat image type hypotheses as confirmed facts.
-- Cite region IDs such as `region_003` and OCR IDs such as `text_001` when supporting a claim.
+- Cite region IDs such as `region_003`, OCR IDs such as `text_001`, and quote raw/normalized OCR text when supporting an important claim.
 - If a region is unclear, say so instead of filling in missing details.
+- Do not mention examples, old cases, or placeholder OCR errors unless they appear in this packet.
 - Do not perform identity, medical, legal, security-critical, or sensitive-attribute judgments.
 """
 

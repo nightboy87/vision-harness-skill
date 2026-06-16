@@ -2,18 +2,22 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Workflow To SOP Output",
   "type": "object",
-  "required": ["task", "observed_facts", "nodes", "edges", "decision_points", "draft_sop", "uncertainties"],
+  "required": ["task", "observed_facts", "nodes", "confirmed_edges", "candidate_edges", "decision_points", "extracted_sop", "inferred_business_interpretation", "suggested_missing_details", "uncertainties"],
   "properties": {
     "task": {"const": "workflow_to_sop"},
     "observed_facts": {"type": "array", "items": {"type": "string"}},
     "nodes": {"type": "array", "items": {"type": "object"}},
-    "edges": {"type": "array", "items": {"type": "object"}},
+    "confirmed_edges": {"type": "array", "items": {"type": "object"}},
+    "candidate_edges": {"type": "array", "items": {"type": "object"}},
+    "unresolved_connectors": {"type": "array", "items": {"type": "string"}},
     "decision_points": {"type": "array", "items": {"type": "object"}},
     "start_node": {"type": "string"},
     "end_nodes": {"type": "array", "items": {"type": "string"}},
     "missing_links": {"type": "array", "items": {"type": "string"}},
     "ambiguous_regions": {"type": "array", "items": {"type": "string"}},
-    "draft_sop": {"type": "array", "items": {"type": "string"}},
+    "extracted_sop": {"type": "array", "items": {"type": "object"}},
+    "inferred_business_interpretation": {"type": "array", "items": {"type": "string"}},
+    "suggested_missing_details": {"type": "array", "items": {"type": "string"}},
     "uncertainties": {"type": "array", "items": {"type": "string"}}
   }
 }
