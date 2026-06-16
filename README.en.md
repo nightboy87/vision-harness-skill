@@ -2,70 +2,196 @@
 
 [中文说明](README.zh-CN.md)
 
-Vision Harness Skill is a script-backed Agent Skill for structured visual understanding.
+Vision Harness Skill is a structured visual understanding skill package for agents.
 
-It has two goals:
+It is not another multimodal model. Instead, it provides a visual harness layer around agents:
 
-1. **Make text-only agents see images.** It converts an image into a structured `visual_packet` so a text-only LLM agent can reason from OCR blocks, evidence quotes, text line groups, layout regions, visual features, routing hints, and uncertainty notes.
-2. **Make multimodal agents read images better.** It gives multimodal LLM agents a structured reading protocol: observed facts, inferences, evidence regions, evidence quotes, uncertainties, and recommended actions.
+* It helps text-only LLM agents understand images through structured visual packets.
+* It helps multimodal LLM agents analyze images with evidence, regions, uncertainty, and task-specific reading protocols.
 
-This project is not another multimodal model. It is a practical visual harness around agents.
+The current version focuses on three scenarios:
 
----
-
-## What is new in v0.1.2
-
-v0.1.2 is based on three real scenario tests:
-
-- OCR-rich technical screenshot diagnosis;
-- workflow swimlane extraction;
-- UI screenshot analysis and HTML reconstruction.
-
-Improvements:
-
-- added `evidence_quotes` so important OCR-based claims can quote raw/normalized text;
-- added `text_line_groups` for logs, tables, dashboards, and UI text clusters;
-- added heuristic `spatial_layout_analysis` for sidebars, right rails, status bars, grid/swimlane candidates, and line signals;
-- strengthened screenshot diagnosis rules: no stale examples, no local-success-as-global-success, and stricter fact/inference separation;
-- revised workflow-to-SOP template: extracted SOP, inferred interpretation, and suggested missing details are now separated;
-- decision points in workflow diagrams now require explicit evidence;
-- revised UI template with `ui_audit`, `ui_semantic_rebuild`, and `ui_fidelity_clone` modes;
-- added UI `layout_tree`, `spatial_constraints`, and fidelity self-check rules.
+1. Technical screenshot diagnosis
+2. UI screenshot analysis and semantic HTML reconstruction
+3. Early-stage workflow / swimlane diagram extraction
 
 ---
 
-## Best current use cases
+## Why this project exists
 
-Best for:
+Agents often struggle with image-based tasks in two different ways.
 
-1. OCR-rich technical screenshot diagnosis;
-2. UI screenshot analysis and semantic HTML reconstruction;
-3. early-stage workflow diagram extraction and SOP skeleton drafting.
+Text-only LLM agents cannot directly read screenshots, diagrams, or UI mockups.
 
-Not yet for:
+Multimodal LLM agents can see images, but they often jump directly to conclusions without a stable evidence trail. They may also mix observed facts, inferred explanations, and uncertain assumptions.
 
-1. pixel-perfect UI recreation;
-2. fully automatic flowchart topology recovery;
-3. final SOP generation without human review;
-4. high-risk medical, legal, security, identity, or surveillance decisions.
+Vision Harness Skill does not try to make the model itself smarter. It makes the visual analysis process more structured, auditable, and useful for downstream agent work.
 
 ---
 
-## Why this exists
+## Core capabilities
 
-Native multimodal models can describe images, but agent workflows often need stricter outputs:
+### 1. Text-only Agent Mode
 
-- evidence regions instead of vague claims;
-- evidence quotes instead of only text IDs;
-- separation between facts and inferences;
-- explicit uncertainty marking;
-- machine-readable JSON;
-- screenshot diagnosis;
-- workflow-to-SOP extraction;
-- UI audit and UI reconstruction guidance;
-- a fallback path for text-only LLM agents.
+For text-only LLM agents.
 
-Vision Harness Skill turns image analysis from a free-form answer into a reusable agent workflow.
+The image is converted into a structured `visual_packet`, including:
+
+* Image size, orientation, dominant colors, brightness, and complexity
+* OCR text blocks
+* Text line groups
+* Region layout
+* Evidence quotes
+* Spatial layout hints
+* Task-specific agent instructions
+
+A text-only LLM can then use this packet to diagnose screenshots, analyze UI layouts, or extract early workflow structures.
+
+### 2. Multimodal Agent Mode
+
+For multimodal LLM agents.
+
+A multimodal agent can inspect the original image while using the skill's protocols and templates to produce:
+
+* `observed_facts`: what is directly visible
+* `inferences`: what is inferred from visible evidence
+* `evidence_quotes`: raw and normalized OCR evidence
+* `evidence_regions`: visual regions used as support
+* `uncertainties`: what needs human review
+* `recommended_actions`: what to do next
+
+---
+
+## Use cases
+
+### Technical screenshot diagnosis
+
+Useful for screenshots containing logs, errors, configuration panels, command outputs, IDEs, dashboards, or enterprise software screens.
+
+Example prompt:
+
+```text
+Analyze this screenshot, identify the likely root cause, and provide actionable next steps.
+```
+
+### UI screenshot analysis and HTML reconstruction
+
+Useful for product mockups, dashboards, admin panels, and internal tools.
+
+Supported modes:
+
+* `ui_audit`: analyze UI structure and issues
+* `ui_semantic_rebuild`: rebuild a semantic HTML draft
+* `ui_fidelity_clone`: assist with layout-preserving UI recreation
+
+Note: HTML reconstruction quality depends not only on this skill, but also on the frontend coding ability of the driving agent model.
+
+### Workflow / swimlane diagram extraction
+
+Useful for extracting early structure from process diagrams:
+
+* Stages
+* Roles / swimlanes
+* Nodes
+* Candidate edges
+* Draft SOP
+* Missing details for human review
+
+In the current version, arrow direction and complex topology recovery are still heuristic. Generated SOPs should be manually reviewed.
+
+---
+
+## Installation
+
+```bash
+pip install -r requirements.txt
+```
+
+Recommended Python version:
+
+```text
+Python 3.10+
+```
+
+OCR quality depends on the local OCR environment. If no OCR engine is available, the tool can still produce basic visual metadata, but text extraction will be limited.
+
+---
+
+## Quick start
+
+```bash
+python tools/visual_extract.py examples/screenshot_error/sample_error.png --task screenshot_diagnosis --out outputs/screenshot_case
+```
+
+The output directory will contain:
+
+```text
+visual_packet.json
+visual_packet.md
+annotated_regions.png
+agent_instruction.md
+crops/
+```
+
+What each file means:
+
+* `visual_packet.json`: structured visual data
+* `visual_packet.md`: Markdown version for direct agent use
+* `annotated_regions.png`: image with region annotations
+* `agent_instruction.md`: task-specific instruction for the agent
+* `crops/`: cropped regions
+
+---
+
+## CLI usage
+
+```bash
+python tools/visual_extract.py <image> --task <task> --out <output_dir>
+```
+
+Supported tasks:
+
+```text
+auto
+screenshot_diagnosis
+workflow_to_sop
+ui_audit
+structured_visual_reading
+```
+
+Examples:
+
+```bash
+python tools/visual_extract.py ./input.png --task ui_audit --out ./outputs/ui_case
+```
+
+```bash
+python tools/visual_extract.py ./workflow.png --task workflow_to_sop --out ./outputs/workflow_case
+```
+
+---
+
+## Output discipline
+
+Vision Harness Skill encourages agents to separate:
+
+```text
+Facts: directly visible information
+Inferences: judgments based on evidence
+Evidence: OCR quotes, regions, or visual signals
+Uncertainties: items requiring human review
+Actions: recommended next steps
+```
+
+Recommended output structure:
+
+```text
+observed_facts
+evidence_quotes
+inferences
+uncertainties
+recommended_actions
+```
 
 ---
 
@@ -83,7 +209,6 @@ vision-harness-skill/
 │  ├─ image_loader.py
 │  ├─ ocr_engine.py
 │  ├─ layout_analyzer.py
-│  ├─ region_marker.py
 │  ├─ packet_builder.py
 │  └─ schema_validate.py
 ├─ schemas/
@@ -95,133 +220,43 @@ vision-harness-skill/
 
 ---
 
-## Installation
+## Current limits
 
-Install the minimal dependencies:
+Vision Harness Skill v0.1.2 is still an early release.
 
-```bash
-pip install -r requirements.txt
-```
+It is currently useful for:
 
-Optional OCR support:
+* OCR-rich technical screenshot diagnosis
+* UI screenshot analysis and semantic HTML draft generation
+* Early workflow / swimlane diagram extraction
 
-```bash
-pip install paddleocr
-```
+It does not claim to provide:
 
-Or the lighter OCR option:
-
-```bash
-pip install rapidocr-onnxruntime
-```
-
-Or:
-
-```bash
-pip install pytesseract
-```
-
-If no OCR engine is installed, the tool still works, but `ocr_blocks` will be empty.
+* General-purpose image understanding
+* Reliable face, object, or natural-scene recognition
+* Pixel-perfect UI recreation
+* Full automatic flowchart topology recovery
+* Final SOP generation without human review
 
 ---
 
-## Quick start
+## Version
 
-```bash
-python tools/visual_extract.py examples/screenshot_error/sample_error.png --task screenshot_diagnosis --out outputs/screenshot_case
-```
+Current version: `v0.1.2`
 
-Expected outputs:
+Main improvements:
 
-```text
-outputs/screenshot_case/
-├─ visual_packet.json
-├─ visual_packet.md
-├─ annotated_regions.png
-├─ agent_instruction.md
-└─ crops/
-```
+* Added `evidence_quotes`
+* Added `text_line_groups`
+* Improved `spatial_layout_analysis`
+* Strengthened screenshot diagnosis templates
+* Reworked workflow-to-SOP guardrails
+* Added layout tree, spatial constraints, and fidelity self-check for UI reconstruction
+
+See [CHANGELOG.md](CHANGELOG.md) for details.
 
 ---
 
-## Mode 1: Text-only agent mode
+## License
 
-Use this mode when the agent cannot inspect images directly.
-
-Run extraction first:
-
-```bash
-python tools/visual_extract.py input.png --task auto --out outputs/case1
-```
-
-Then give the text-only LLM agent:
-
-- `visual_packet.md` or `visual_packet.json`;
-- `templates/text_agent_mode.md`;
-- the recommended task template from the packet.
-
-The agent must clearly state that it is reasoning from a visual translation, not directly seeing the original image.
-
----
-
-## Mode 2: Multimodal agent mode
-
-Use this mode when the agent can already inspect images, but needs a stricter visual reasoning workflow.
-
-Give the multimodal LLM agent:
-
-- the original image;
-- `annotated_regions.png`;
-- `visual_packet.json` or `visual_packet.md`;
-- `templates/multimodal_agent_mode.md`;
-- the relevant task template.
-
-The agent must cite region IDs, quote evidence when text matters, and separate facts from inferences.
-
----
-
-## Task templates
-
-| Task | Use when | Template |
-|---|---|---|
-| Screenshot diagnosis | Error screenshots, build logs, software issues, UI error messages, dashboards | `templates/screenshot_diagnosis.md` |
-| Workflow to SOP | Flowcharts, whiteboard processes, process diagrams, swimlanes | `templates/workflow_to_sop.md` |
-| UI audit / reconstruction | Product screenshots, web/app screens, UX review, UI semantic rebuild, UI fidelity clone | `templates/ui_audit.md` |
-
----
-
-## Design principles
-
-- Scripts handle deterministic extraction.
-- LLMs handle reasoning and generation.
-- Skill files provide method, gotchas, schemas, and task templates.
-- Every important claim should have evidence.
-- Text-based claims should include raw/normalized OCR quotes where available.
-- Uncertainty is part of the output, not a failure.
-- Text-only mode should not pretend to have native vision.
-- Multimodal mode should not jump from image to conclusion without evidence.
-
----
-
-## Limits
-
-v0.1.2 does not:
-
-- train or ship a vision model;
-- use a multimodal model as an observer;
-- perform computer-use clicking;
-- guarantee OCR accuracy;
-- parse every flowchart edge accurately;
-- extract precise chart values;
-- guarantee pixel-perfect HTML/CSS reconstruction;
-- support high-risk medical, legal, security, identity, or surveillance decisions.
-
----
-
-## Development workflow
-
-1. Run `visual_extract.py` on a real image.
-2. Check `visual_packet.md` and `annotated_regions.png`.
-3. Run the recommended template with a text-only or multimodal agent.
-4. Check whether the answer separates facts, inferences, evidence, uncertainties, and actions.
-5. Add new gotchas or template rules when failures appear.
+MIT
