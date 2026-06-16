@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UI Audit Output",
+  "type": "object",
+  "required": ["task", "observed_facts", "layout_summary", "issues", "evidence_regions", "priority_fixes", "uncertainties"],
+  "properties": {
+    "task": {"const": "ui_audit"},
+    "observed_facts": {"type": "array", "items": {"type": "string"}},
+    "layout_summary": {"type": "string"},
+    "information_density": {"type": "string"},
+    "primary_focus": {"type": "string"},
+    "issues": {"type": "array", "items": {"type": "object"}},
+    "evidence_regions": {"type": "array", "items": {"type": "string"}},
+    "priority_fixes": {"type": "array", "items": {"type": "string"}},
+    "uncertainties": {"type": "array", "items": {"type": "string"}}
+  }
+}

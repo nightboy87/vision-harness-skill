@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Screenshot Diagnosis Output",
+  "type": "object",
+  "required": ["task", "observed_facts", "error_signals", "inferences", "evidence_regions", "next_checks", "uncertainties"],
+  "properties": {
+    "task": {"const": "screenshot_diagnosis"},
+    "observed_facts": {"type": "array", "items": {"type": "string"}},
+    "error_signals": {"type": "array", "items": {"type": "string"}},
+    "inferences": {"type": "array", "items": {"type": "string"}},
+    "evidence_regions": {"type": "array", "items": {"type": "string"}},
+    "next_checks": {"type": "array", "items": {"type": "string"}},
+    "missing_info": {"type": "array", "items": {"type": "string"}},
+    "confidence": {"type": "string"},
+    "uncertainties": {"type": "array", "items": {"type": "string"}}
+  }
+}

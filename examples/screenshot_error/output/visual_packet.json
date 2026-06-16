@@ -1,0 +1,358 @@
+{
+  "version": "0.1.0",
+  "mode": "visual_bridge",
+  "task": "screenshot_diagnosis",
+  "source": {
+    "input_type": "path",
+    "filename": "sample_error.png",
+    "sha256": "97e8be5c324015f83dd36cdaa3e7e306660deb76556d123e76dc5e10a04a517b"
+  },
+  "image_properties": {
+    "width": 900,
+    "height": 520,
+    "aspect_ratio": 1.731,
+    "orientation": "landscape",
+    "megapixels": 0.47
+  },
+  "visual_features": {
+    "color": {
+      "mean_rgb": [
+        219.52,
+        221.21,
+        222.81
+      ],
+      "brightness_value": 220.88,
+      "brightness": "bright",
+      "contrast_value": 64.12,
+      "contrast": "medium",
+      "dominant_colors": [
+        {
+          "rgb": [
+            245,
+            245,
+            245
+          ],
+          "hex": "#f5f5f5",
+          "ratio": 0.723
+        },
+        {
+          "rgb": [
+            254,
+            254,
+            254
+          ],
+          "hex": "#fefefe",
+          "ratio": 0.113
+        },
+        {
+          "rgb": [
+            38,
+            50,
+            56
+          ],
+          "hex": "#263238",
+          "ratio": 0.109
+        },
+        {
+          "rgb": [
+            160,
+            168,
+            185
+          ],
+          "hex": "#a0a8b9",
+          "ratio": 0.027
+        },
+        {
+          "rgb": [
+            246,
+            245,
+            245
+          ],
+          "hex": "#f6f5f5",
+          "ratio": 0.022
+        },
+        {
+          "rgb": [
+            33,
+            45,
+            51
+          ],
+          "hex": "#212d33",
+          "ratio": 0.007
+        }
+      ]
+    },
+    "edge_density": {
+      "value": 1.97,
+      "label": "low"
+    }
+  },
+  "layout_regions": [
+    {
+      "id": "region_001",
+      "type_hint": "grid_cell",
+      "bbox": [
+        0,
+        0,
+        300,
+        173
+      ],
+      "visual_weight": "high",
+      "contains_text_ids": [
+        "text_001",
+        "text_002",
+        "text_003"
+      ],
+      "notes": "top_left; brightness=178.5, complexity=91.9"
+    },
+    {
+      "id": "region_002",
+      "type_hint": "grid_cell",
+      "bbox": [
+        300,
+        0,
+        600,
+        173
+      ],
+      "visual_weight": "high",
+      "contains_text_ids": [],
+      "notes": "top_center; brightness=174.9, complexity=94.4"
+    },
+    {
+      "id": "region_003",
+      "type_hint": "grid_cell",
+      "bbox": [
+        600,
+        0,
+        900,
+        173
+      ],
+      "visual_weight": "high",
+      "contains_text_ids": [],
+      "notes": "top_right; brightness=175.2, complexity=94.3"
+    },
+    {
+      "id": "region_004",
+      "type_hint": "grid_cell",
+      "bbox": [
+        0,
+        173,
+        300,
+        346
+      ],
+      "visual_weight": "low",
+      "contains_text_ids": [],
+      "notes": "middle_left; brightness=245.8, complexity=6.8"
+    },
+    {
+      "id": "region_005",
+      "type_hint": "grid_cell",
+      "bbox": [
+        300,
+        173,
+        600,
+        346
+      ],
+      "visual_weight": "medium",
+      "contains_text_ids": [
+        "text_004",
+        "text_005",
+        "text_006",
+        "text_007",
+        "text_008",
+        "text_009"
+      ],
+      "notes": "middle_center; brightness=232.9, complexity=49.7"
+    },
+    {
+      "id": "region_006",
+      "type_hint": "grid_cell",
+      "bbox": [
+        600,
+        173,
+        900,
+        346
+      ],
+      "visual_weight": "low",
+      "contains_text_ids": [],
+      "notes": "middle_right; brightness=245.8, complexity=6.7"
+    },
+    {
+      "id": "region_007",
+      "type_hint": "grid_cell",
+      "bbox": [
+        0,
+        346,
+        300,
+        520
+      ],
+      "visual_weight": "low",
+      "contains_text_ids": [],
+      "notes": "bottom_left; brightness=245.0, complexity=0.0"
+    },
+    {
+      "id": "region_008",
+      "type_hint": "grid_cell",
+      "bbox": [
+        300,
+        346,
+        600,
+        520
+      ],
+      "visual_weight": "low",
+      "contains_text_ids": [],
+      "notes": "bottom_center; brightness=245.0, complexity=0.0"
+    },
+    {
+      "id": "region_009",
+      "type_hint": "grid_cell",
+      "bbox": [
+        600,
+        346,
+        900,
+        520
+      ],
+      "visual_weight": "low",
+      "contains_text_ids": [],
+      "notes": "bottom_right; brightness=245.0, complexity=0.0"
+    }
+  ],
+  "ocr_blocks": [
+    {
+      "id": "text_001",
+      "text": "Internal",
+      "bbox": [
+        26,
+        19,
+        91,
+        33
+      ],
+      "confidence": 0.96,
+      "region_id": "region_001"
+    },
+    {
+      "id": "text_002",
+      "text": "Admin",
+      "bbox": [
+        99,
+        19,
+        155,
+        33
+      ],
+      "confidence": 0.96,
+      "region_id": "region_001"
+    },
+    {
+      "id": "text_003",
+      "text": "Console",
+      "bbox": [
+        163,
+        19,
+        233,
+        33
+      ],
+      "confidence": 0.96,
+      "region_id": "region_001"
+    },
+    {
+      "id": "text_004",
+      "text": "502",
+      "bbox": [
+        312,
+        211,
+        361,
+        231
+      ],
+      "confidence": 0.96,
+      "region_id": "region_005"
+    },
+    {
+      "id": "text_005",
+      "text": "Bad",
+      "bbox": [
+        375,
+        210,
+        424,
+        231
+      ],
+      "confidence": 0.96,
+      "region_id": "region_005"
+    },
+    {
+      "id": "text_006",
+      "text": "Gateway",
+      "bbox": [
+        437,
+        211,
+        559,
+        237
+      ],
+      "confidence": 0.96,
+      "region_id": "region_005"
+    },
+    {
+      "id": "text_007",
+      "text": "Upstream",
+      "bbox": [
+        312,
+        254,
+        396,
+        271
+      ],
+      "confidence": 0.96,
+      "region_id": "region_005"
+    },
+    {
+      "id": "text_008",
+      "text": "service",
+      "bbox": [
+        404,
+        257,
+        467,
+        267
+      ],
+      "confidence": 0.96,
+      "region_id": "region_005"
+    },
+    {
+      "id": "text_009",
+      "text": "timeout",
+      "bbox": [
+        474,
+        254,
+        544,
+        267
+      ],
+      "confidence": 0.96,
+      "region_id": "region_005"
+    }
+  ],
+  "structure_candidates": {
+    "ui_elements": [],
+    "flow_nodes": [],
+    "arrow_candidates": [],
+    "chart_regions": []
+  },
+  "image_type_hypotheses": [
+    {
+      "type": "system_error_screenshot",
+      "confidence": "medium_to_high",
+      "evidence": [
+        "OCR contains error-like terms",
+        "text-heavy image"
+      ]
+    }
+  ],
+  "routing": {
+    "recommended_template": "screenshot_diagnosis",
+    "reason": "User or caller specified task."
+  },
+  "uncertainties": [
+    "OCR may miss small, blurred, rotated, handwritten, or low-contrast text.",
+    "Layout regions are grid-based and heuristic; they are evidence anchors, not semantic objects.",
+    "Image type hypotheses are heuristic and must not be treated as confirmed facts.",
+    "The tool does not use a multimodal LLM and cannot reliably identify arbitrary objects or scenes.",
+    "Flow arrows and chart values are not fully parsed in v0.1; use human review for critical decisions."
+  ],
+  "agent_notes": "Image size: 900x520 (landscape, aspect_ratio=1.731).\nBrightness: bright; contrast: medium; edge_density: low (1.97).\nOCR blocks detected: 9. Layout regions: 9.\nTop image type hypothesis: system_error_screenshot (medium_to_high). Evidence: OCR contains error-like terms, text-heavy image.\nRecommended template: screenshot_diagnosis. Reason: User or caller specified task..\nOCR excerpt: Internal | Admin | Console | 502 | Bad | Gateway | Upstream | service | timeout\nImportant: This packet is a visual translation. Treat heuristic labels as hypotheses, not facts."
+}

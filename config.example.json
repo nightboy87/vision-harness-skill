@@ -1,0 +1,7 @@
+{
+  "ocr_engine": "auto",
+  "default_task": "auto",
+  "write_crops": true,
+  "max_ocr_blocks_in_prompt": 40,
+  "safety_mode": "strict"
+}

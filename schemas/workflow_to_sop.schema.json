@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Workflow To SOP Output",
+  "type": "object",
+  "required": ["task", "observed_facts", "nodes", "edges", "decision_points", "draft_sop", "uncertainties"],
+  "properties": {
+    "task": {"const": "workflow_to_sop"},
+    "observed_facts": {"type": "array", "items": {"type": "string"}},
+    "nodes": {"type": "array", "items": {"type": "object"}},
+    "edges": {"type": "array", "items": {"type": "object"}},
+    "decision_points": {"type": "array", "items": {"type": "object"}},
+    "start_node": {"type": "string"},
+    "end_nodes": {"type": "array", "items": {"type": "string"}},
+    "missing_links": {"type": "array", "items": {"type": "string"}},
+    "ambiguous_regions": {"type": "array", "items": {"type": "string"}},
+    "draft_sop": {"type": "array", "items": {"type": "string"}},
+    "uncertainties": {"type": "array", "items": {"type": "string"}}
+  }
+}
