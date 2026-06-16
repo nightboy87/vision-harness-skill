@@ -217,31 +217,6 @@ v0.1 does not:
 
 ---
 
-## Recommended development workflow
-
-1. Run `visual_extract.py` on sample images.
-2. Inspect `visual_packet.json` and `annotated_regions.png`.
-3. Run a text-only LLM against the packet.
-4. Run a multimodal LLM against the original image, annotated image, and packet.
-5. Compare the result with a naked multimodal answer.
-6. Add gotchas and update templates based on failures.
-7. Add regression cases to `evals/`.
-
----
-
-## Roadmap
-
-Potential future versions may include:
-
-- stronger OCR adapters;
-- UI parsing adapters;
-- document parsing adapters;
-- chart-region parsing;
-- flowchart topology enhancement;
-- model-specific multimodal prompting templates;
-- MCP or CLI wrappers for agent frameworks.
-
----
 
 ## License
 
